@@ -4,18 +4,21 @@
 this container is set up to enable compiling xrootd and eos with afl-gcc and afl-g++
 the above allows afl to intelligently fuzz eos
 
+read the afl documentation! it's well written and extremely helpful!
+
 ## components
-- cmake3 (downloaded & compiled)
+- cmake3 (yum install)
 - afl (downloaded & compiled)
-- xrootd (downloaded & compiled)
-- eos (from git repository, compiled)
+- xrootd (from github repository, compiled)
+- eos (from gitlab repository, compiled)
 
 ## steps
-- alternatively use build script (see below)
-- run `docker-compose up -d eos`
-- installation of cmake, afl, eos, xrootd is now fully automated - retaining the section(s) below just as a note
+- use build script (see below)
+- installation of cmake, afl, eos, xrootd now fully automated - retaining the section(s) below just as a note
+- run `docker-compose up -d eos-fuzz` & `docker exec -ti eos-fuzz /bin/bash`
+    - alternatively `docker-compose up -d eos` & `docker exec -ti eos /bin/bash` for non-afl compiled eos
 - run `./eos-setup.sh` within the container to set up a mini, empty eos cluster
-- run `afl-fuzz -m none -i /fuzz/mini -o /results/run(x) eos` (where x is the nth run of afl)
+- run `afl-fuzz -m none -i /fuzz/mini -o /results/run(x) eos` (where x is the nth run of afl), or however else you want to distinguish between runs
   - if EOS hangs/freezes, try `source /etc/sysconfig/eos /cf.env` to make sure the right envvars are set
 
 ## build script
