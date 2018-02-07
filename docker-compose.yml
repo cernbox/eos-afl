@@ -1,0 +1,12 @@
+version: '2'
+services:
+  eos:
+    container_name: eos-fuzz
+    image: eos-fuzz:afl
+    network_mode: host
+    stdin_open: true
+    tty: true
+    volumes:
+    - ./results:/results
+    logging:
+      driver: none

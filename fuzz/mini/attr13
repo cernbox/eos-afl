@@ -1,0 +1,1 @@
+attr set sys.lru.convert.match="*:1mo" /eos/test/tfiles/dir2/dir1

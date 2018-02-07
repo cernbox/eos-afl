@@ -1,0 +1,138 @@
+test -e /usr/lib64/libjemalloc.so.1 && export LD_PRELOAD=/usr/lib64/libjemalloc.so.1
+
+# Disable the KRB5 replay cache
+export KRB5RCACHETYPE=none
+
+# What roles should the xroot daemon run for. For each role you can overwrite
+# the default options using a dedicate sysconfig file
+# e.g. /etc/sysconfig/xrd.<role>. The role based mechanism allows for
+# multiple xrd's running with different options to be controlled via
+# the same initd script
+XRD_ROLES="mq sync mgm fst"
+
+# ------------------------------------------------------------------
+# EOS Configuration
+# ------------------------------------------------------------------
+
+# The EOS instance name
+export EOS_INSTANCE_NAME=eos-afl
+
+# The EOS configuration to load after daemon start
+export EOS_AUTOLOAD_CONFIG=default
+
+# The EOS broker URL
+export EOS_BROKER_URL=root://localhost:1097//eos/
+
+# The EOS host geo location tag used to sort hosts into geographical (rack) locations
+export EOS_GEOTAG=fuzzy
+
+# The fully qualified hostname of MGM master1
+export EOS_MGM_MASTER1=${EOS_MGM_MASTER1-localhost}
+
+# The fully qualified hostname of MGM master2
+export EOS_MGM_MASTER2=${EOS_MGM_MASTER2-localhost}
+
+# The alias which selects master 1 or 2
+export EOS_MGM_ALIAS=${EOS_MGM_ALIAS-localhost}
+
+# The mail notification in case of fail-over
+export EOS_MAIL_CC=${EOS_MAIL_CC-"root@localhost"}
+export EOS_NOTIFY="mail -s `date +%s`-`hostname`-eos-notify $EOS_MAIL_CC"
+
+# Allow UTF-8 path names excluding only CR,LF
+export EOS_UTF8=""
+
+# Do subtree accounting on directories (set to 1 to enable)
+export EOS_NS_ACCOUNTING=1
+
+# Run a multi-threaded boot procedure using the maximum number of avilable core’s of a machine.
+export EOS_NS_BOOT_PARALLEL=1
+
+# Do sync time propagation (set to 1 to enable)
+export EOS_SYNCTIME_ACCOUNTING=1
+
+# ------------------------------------------------------------------
+# FUSE Configuration
+# ------------------------------------------------------------------
+
+# The mount directory for 'eosd'
+export EOS_FUSE_MOUNTDIR=/eos/
+
+# The MGM host from where to do the inital mount
+export EOS_FUSE_MGM_ALIAS=${EOS_MGM_ALIAS-localhost}
+
+# Enable FUSE read-ahead (default off)
+export EOS_FUSE_RDAHEAD=1
+
+# Configure FUSE read-ahead window (default 128k)
+export EOS_FUSE_RDAHEAD_WINDOW=131072
+
+# ------------------------------------------------------------------
+# HTTPD Configuration
+# ------------------------------------------------------------------
+
+# we use EPOLL and 16 threads
+export EOS_HTTP_THREADPOOL="epoll"
+export EOS_HTTP_THREADPOOL_SIZE=16
+
+# memory buffer size per connection
+export EOS_HTTP_CONNECTION_MEMORY_LIMIT=4194304
+
+# ------------------------------------------------------------------
+# Federation Configuration
+# ------------------------------------------------------------------
+
+# The host[:port] name of the meta manager (global redirector)
+export EOS_FED_MANAGER=$EOS_MGM_ALIAS:1094
+
+# The port of the PSS xrootd server
+export EOS_PSS_PORT=1098
+
+# The hostname[:port] of the EOS MGM service
+export EOS_PSS_MGM=$EOS_MGM_ALIAS:1094
+
+# The path which should be proxied (/ for all)
+export EOS_PSS_PATH=/
+
+# ------------------------------------------------------------------
+# Test Configuration
+# ------------------------------------------------------------------
+
+# MGM host redirector
+export EOS_TEST_REDIRECTOR=localhost
+
+# local test output directory
+export EOS_TEST_TESTSYS=/tmp/eos-instance-test/
+
+# time to lock re-sending of SMS for consecutively failing tests
+export EOS_TEST_GSMLOCKTIME=3600
+
+# max. time given to the test to finish
+export EOS_TEST_TESTTIMESLICE=300;
+
+# ------------------------------------------------------------------
+# Global Vstl Configuration
+# ------------------------------------------------------------------
+
+# define the global broker for subscription
+# export EOS_VST_BROKER_URL=root://localhost:1099//eos/
+
+# disable subscription to the global broker if desired
+# !!! DON'T TURN THIS ON UNLESS YOU WANT THE WANT TO KNOW ALL ABOUT YOUR STORAGE !!!!
+# If you do want to advertise your cluster, please go find the original EOS configuration to work with
+export EOS_VST_BROKER_DISABLE=1
+
+# define which client we trust for querying this MGM
+# export EOS_VST_TRUSTED_HOST=localhost
+
+# ------------------------------------------------------------------
+# MGM TTY Console Broadcast Configuration
+# ------------------------------------------------------------------
+
+# define the log file where you want to grep
+export EOS_TTY_BROADCAST_LISTEN_LOGFILE="/var/log/eos/mgm/xrdlog.mgm"
+
+# define the log file regex you want to broad cast to all consoles
+export EOS_TTY_BROACAST_EGREP="CRIT,ALERT,EMERG"
+
+export EOS_NS_BOOT_PARALLEL=1

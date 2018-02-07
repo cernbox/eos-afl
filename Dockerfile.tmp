@@ -1,0 +1,45 @@
+FROM FUZZ_BASE_IMAGE
+
+RUN rpm --rebuilddb && yum -y install \
+                   attr \
+                   bzip2 bzip2-libs bzip2-devel \
+                   cppunit-devel \
+                   eos-rocksdb \
+                   ethtool \
+                   elfutils-devel elfutils-libs elfutils-libelf-devel-static \
+                   hostname \
+                   hiredis-devel \
+                   jsoncpp-devel \
+                   jemalloc jemalloc-devel \
+                   libasan \
+                   libtsan \
+                   libcurl-devel \
+                   libattr-devel \
+                   libevent libevent-devel \
+                   libmicrohttpd libmicrohttpd-devel \
+		   leveldb leveldb-devel leveldb-debuginfo \
+                   openldap-devel \
+		   protobuf3 protobuf3-compiler protobuf3-devel protobuf3-debuginfo \
+                   sparsehash-devel \
+                   xfsprogs xfsprogs-devel \
+                   zeromq zeromq3-devel zeromq3-debuginfo
+
+RUN cd / && git clone https://gitlab.cern.ch/dss/eos.git && mkdir /eos/build && \
+    cd /eos && git submodule update --init --recursive && \
+    AFL_COMPILE export CC=/usr/local/bin/afl-gcc && export CXX=/usr/local/bin/afl-g++ && \
+    #export AFL_USE_ASAN=1 && \
+    #export VERBOSE=1 && \
+    #export LDFLAGS="-pthread" && \
+    cd /eos/build && cmake3 -d .. && \
+    sed -ri 's{^(.*)/usr/local/bin/afl-(.*)XrdMqSharedObject.cc${\1/usr/bin/\2XrdMqSharedObject.cc{g' mq/CMakeFiles/XrdMqClient-Static.dir/build.make && \
+    sed -ri 's{^(.*)/usr/local/bin/afl-(.*)XrdMgmOfs.cc${\1/usr/bin/\2XrdMgmOfs.cc{g' mgm/CMakeFiles/XrdEosMgm-Objects.dir/build.make && \
+    sed -ri 's{^(.*)/usr/local/bin/afl-(.*)GeoTreeEngine.cc${\1/usr/bin/\2GeoTreeEngine.cc{g' mgm/CMakeFiles/XrdEosMgm-Objects.dir/build.make && \
+    sed -ri 's{^(.*)/usr/local/bin/afl-(.*)RWMutex.cc${\1/usr/bin/\2RWMutex.cc{g' common/CMakeFiles/eosCommon-Static.dir/build.make && \
+    make -j 4 && make install
+
+COPY eos-config/xrd.cf.mgm /etc/
+COPY eos-config/xrd.cf.fst.tmp /
+COPY eos-config/sysconfig /etc/sysconfig/eos
+COPY eos-config/cf.env /cf.env
+COPY eos-setup.sh /eos-setup.sh
+

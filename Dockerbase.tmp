@@ -1,0 +1,22 @@
+FROM centos:7
+
+COPY eos.repo /etc/yum.repos.d/
+
+RUN rpm --rebuilddb && yum -y install make cmake3 gcc gcc-c++ git wget \
+       fuse fuse-libs fuse-devel \
+       ncurses-static \
+       openssl-devel openssl-static \
+       python-devel \
+       readline-devel readline-static \
+       zlib zlib-devel zlib-static && \
+       echo "*               soft    nofile          200000" >> /etc/security/limits.conf && \
+       echo "*               hard    nofile          200000" >> /etc/security/limits.conf
+
+RUN wget http://lcamtuf.coredump.cx/afl/releases/afl-latest.tgz && tar -xzvf /afl-latest.tgz && mkdir /afl && mv afl-*/* /afl && cd /afl && make install
+
+RUN cd / && git clone https://github.com/xrootd/xrootd.git && mkdir /xrootd/build && \
+    AFL_COMPILE export CC=/usr/local/bin/afl-gcc && export CXX=/usr/local/bin/afl-g++ && \
+    cd /xrootd/build && cmake3 .. && \
+    make -j 4 && make install
+
+COPY fuzz/ /fuzz
