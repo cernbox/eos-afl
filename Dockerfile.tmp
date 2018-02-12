@@ -11,8 +11,6 @@ RUN rpm --rebuilddb && yum -y install \
                    hiredis-devel \
                    jsoncpp-devel \
                    jemalloc jemalloc-devel \
-                   libasan \
-                   libtsan \
                    libcurl-devel \
                    libattr-devel \
                    libevent libevent-devel \

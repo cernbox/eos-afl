@@ -4,6 +4,7 @@ COPY eos.repo /etc/yum.repos.d/
 
 RUN rpm --rebuilddb && yum -y install make cmake3 gcc gcc-c++ git wget \
        fuse fuse-libs fuse-devel \
+       libasan \
        ncurses-static \
        openssl-devel openssl-static \
        python-devel \
@@ -16,6 +17,9 @@ RUN wget http://lcamtuf.coredump.cx/afl/releases/afl-latest.tgz && tar -xzvf /af
 
 RUN cd / && git clone https://github.com/xrootd/xrootd.git && mkdir /xrootd/build && \
     AFL_COMPILE export CC=/usr/local/bin/afl-gcc && export CXX=/usr/local/bin/afl-g++ && \
+    #export AFL_USE_ASAN=1 && \
+    #export VERBOSE=1 && \
+    #export LDFLAGS="-pthread" && \
     cd /xrootd/build && cmake3 .. && \
     make -j 4 && make install
 
