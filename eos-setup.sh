@@ -24,13 +24,13 @@ sleep 5
 # start mq
 cd ${XRD_COREDIR}/core
 echo "starting mq.."
-/usr/local/bin/xrootd -R daemon -n mq -c /etc/xrd.cf.mq -l /var/log/eos/xrdlog.mq -b
+/usr/local/bin/xrootd -R daemon -n mq -c /etc/xrd.cf.mq -l /var/log/eos/xrdlog.mq -b -Iv4
 echo "done!"
 
 # start sync & mgm
 echo "starting mgm & sync.."
-/usr/local/bin/xrootd -R daemon -n sync -c /etc/xrd.cf.sync -l /var/log/eos/xrdlog.sync -b
-/usr/local/bin/xrootd -R daemon -n mgm -c /etc/xrd.cf.mgm -m -l /var/log/eos/xrdlog.mgm -b
+/usr/local/bin/xrootd -R daemon -n sync -c /etc/xrd.cf.sync -l /var/log/eos/xrdlog.sync -b -Iv4
+/usr/local/bin/xrootd -R daemon -n mgm -c /etc/xrd.cf.mgm -m -l /var/log/eos/xrdlog.mgm -b -Iv4
 echo "done!"
 
 # start fst
@@ -39,7 +39,7 @@ do
     echo "starting fst ${i}.."
     cp /xrd.cf.fst.tmp /etc/xrd.cf.fst${i}
     echo "xrd.port $((2000+$i))" >> /etc/xrd.cf.fst${i}
-    /usr/local/bin/xrootd -R daemon -n fst${i} -c /etc/xrd.cf.fst${i} -l /var/log/eos/xrdlog.fst${i} -b
+    /usr/local/bin/xrootd -R daemon -n fst${i} -c /etc/xrd.cf.fst${i} -l /var/log/eos/xrdlog.fst${i} -b -Iv4
     mkdir -p /disks/eosfst${i}
     echo eosfst${i} > /disks/eosfst${i}/.eosfsuuid
     echo ${i} > /disks/eosfst${i}/.eosfsid
