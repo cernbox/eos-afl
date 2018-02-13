@@ -30,7 +30,7 @@ Building instrumented EOS and running the image:
 ./build.sh -b -i
 docker run --privileged --cap-add SYS_PTRACE -it -h eos-afl.demonet --name eos-afl --net demonet eos-fuzz:afl /bin/bash 
 
-# in container
+# [in container]
 yum install -y gdb
 ./eos-setup.sh
 ```
@@ -38,6 +38,7 @@ yum install -y gdb
 Fuzzing:
 
 ```
+# [in container]
 mkdir -p /results
 afl-fuzz -m none -i /fuzz/mini -o /results/run1 eos
 ```
